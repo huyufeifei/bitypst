@@ -1,0 +1,22 @@
+cat:
+  type: article
+  title: ref of cat
+  page-range: 583–630
+  date: 2005
+  author: ["Alice", "Bob"]
+  serial-number:
+    doi: 10.11/123.456
+  parent:
+    title: journal of cat
+    volume: 1
+    issue: 2
+
+dog:
+  type: web
+  title: ref of dog
+  url: https://en.wikipedia.org/wiki/Dog
+
+fish:
+  type: web
+  title: ref of fish
+  url: https://en.wikipedia.org/wiki/Fish
