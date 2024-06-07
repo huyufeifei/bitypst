@@ -1,0 +1,8 @@
+#let is_appendix = state("appendix", true)
+#let partcounter = counter("part")
+#let chaptercounter = counter("chapter")
+#let footnotecounter = counter(footnote)
+#let rawcounter = counter(figure.where(kind: "code"))
+#let imagecounter = counter(figure.where(kind: image))
+#let tablecounter = counter(figure.where(kind: table))
+#let equationcounter = counter(math.equation)

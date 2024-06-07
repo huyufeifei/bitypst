@@ -1,3 +1,4 @@
+// modified from https://typst.app/universe/package/cuti/
 #let fakebold(base-weight: none, s, ..params) = {
   set text(weight: base-weight) if base-weight != none
   set text(..params) if params != ()

@@ -1,154 +1,15 @@
-#import "fakebold.typ": *
 #import "util.typ": *
-#import "ch_padding.typ": ch_padding
-
-#let fsz = (
-  chu: 42pt,
-  s_chu: 36pt,
-  one: 26pt,
-  s_one: 24pt,
-  two: 22pt,
-  s_two: 18pt,
-  three: 16pt,
-  s_three: 15pt,
-  four: 14pt,
-  m_four: 13pt,
-  s_four: 12pt,
-  five: 10.5pt,
-  s_five: 9pt,
-  six: 7.5pt,
-  s_six: 6.5pt,
-  seven: 5.5pt,
-  s_seven: 5pt,
-)
-
-#let ff = (
-  fangsong: ("Times New Roman", "FangSong"), // 仿宋
-  song: ("Times New Roman", "SimSun"), // 宋体
-  hei: ("Times New Roman", "SimHei"), // 黑体
-  kai: ("Times New Roman", "KaiTi"), // 楷体
-  code: ("New Computer Modern Mono", "Times New Roman", "SimSun"),
-  // since there is no standard code font, you can use whatever you like
-)
+#import "config.typ": *
+#import "counters.typ": *
 
 #let lengthceil(len, unit: fsz.s_four) = calc.ceil(len / unit) * unit
-#let partcounter = counter("part")
-#let chaptercounter = counter("chapter")
-#let appendixcounter = counter("appendix")
-#let footnotecounter = counter(footnote)
-#let rawcounter = counter(figure.where(kind: "code"))
-#let imagecounter = counter(figure.where(kind: image))
-#let tablecounter = counter(figure.where(kind: table))
-#let equationcounter = counter(math.equation)
-#let appendix() = {
-  appendixcounter.update(10)
-  chaptercounter.update(0)
-  counter(heading).update(0)
-}
-#let skippedstate = state("skipped", false)
-
-#let chinesenumber(num, standalone: false) = if num < 11 {
-  ("零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十").at(num)
-} else if num < 100 {
-  if calc.rem(num, 10) == 0 {
-    chinesenumber(calc.floor(num / 10)) + "十"
-  } else if num < 20 and standalone {
-    "十" + chinesenumber(calc.rem(num, 10))
-  } else {
-    chinesenumber(calc.floor(num / 10)) + "十" + chinesenumber(calc.rem(num, 10))
-  }
-} else if num < 1000 {
-  let left = chinesenumber(calc.floor(num / 100)) + "百"
-  if calc.rem(num, 100) == 0 {
-    left
-  } else if calc.rem(num, 100) < 10 {
-    left + "零" + chinesenumber(calc.rem(num, 100))
-  } else {
-    left + chinesenumber(calc.rem(num, 100))
-  }
-} else {
-  let left = chinesenumber(calc.floor(num / 1000)) + "千"
-  if calc.rem(num, 1000) == 0 {
-    left
-  } else if calc.rem(num, 1000) < 10 {
-    left + "零" + chinesenumber(calc.rem(num, 1000))
-  } else if calc.rem(num, 1000) < 100 {
-    left + "零" + chinesenumber(calc.rem(num, 1000))
-  } else {
-    left + chinesenumber(calc.rem(num, 1000))
-  }
-}
-
-#let chinesenumbering(..nums, location: none, brackets: false, split: ".") = locate(
-  loc => {
-    let actual_loc = if location == none { loc } else { location }
-    if appendixcounter.at(actual_loc).first() < 10 {
-      if nums.pos().len() == 1 {
-        "第" + str(nums.pos().first()) + "章"
-      } else {
-        numbering(if brackets { "(1" + aplit + "1)" } else { "1" + split + "1" }, ..nums)
-      }
-    } else {
-      if nums.pos().len() == 1 {
-        "附录 " + numbering("A.1", ..nums)
-      } else {
-        numbering(if brackets { "(A.1)" } else { "A.1" }, ..nums)
-      }
-    }
-  },
-)
-
-#let chineseunderline(s, width: 300pt, bold: false) = {
-  let chars = s.clusters()
-  let n = chars.len()
-  style(styles => {
-    let i = 0
-    let now = ""
-    let ret = ()
-
-    while i < n {
-      let c = chars.at(i)
-      let nxt = now + c
-
-      if measure(nxt, styles).width > width or c == "\n" {
-        if bold {
-          ret.push(strong(now))
-        } else {
-          ret.push(now)
-        }
-        ret.push(v(-1em))
-        ret.push(line(length: 100%))
-        if c == "\n" {
-          now = ""
-        } else {
-          now = c
-        }
-      } else {
-        now = nxt
-      }
-
-      i = i + 1
-    }
-
-    if now.len() > 0 {
-      if bold {
-        ret.push(strong(now))
-      } else {
-        ret.push(now)
-      }
-      ret.push(v(-0.9em))
-      ret.push(line(length: 100%))
-    }
-
-    ret.join()
-  })
-}
+//#let skippedstate = state("skipped", false)
 
 #let chineseoutline(title: [目#h(1em)录], depth: none, indent: false) = {
   heading(title, numbering: none, outlined: false)
   locate(
     it => {
-      let elements = query(heading.where(outlined: true).after(it), it)
+      let elements = query(heading.where(outlined: true))
 
       for el in elements {
         // Skip list of images and list of tables
@@ -210,7 +71,7 @@
   heading(title, numbering: none, outlined: false)
   locate(
     it => {
-      let elements = query(figure.where(kind: kind).after(it), it)
+      let elements = query(figure.where(kind: kind).after(it))
 
       for el in elements {
         let maybe_number = {
@@ -234,7 +95,7 @@
           box(width: 1fr, h(10pt) + box(width: 1fr, repeat[.]) + h(10pt))
 
           // Page number
-          let footers = query(selector(<__footer__>).after(el.location()), el.location())
+          let footers = query(selector(<__footer__>).after(el.location()))
           let page_number = if footers == () {
             0
           } else {
@@ -358,9 +219,7 @@
       let pg = counter(page).at(loc).first()
       if (part != 0) or (pg != 1) {
         [
-          #ch_padding(pad: 1pt)[北京理工大学本科生毕业设计（论文）]
-          #v(-0.8em)
-          #line(length: 100%)
+          #ch_padding(chineseunderline("北京理工大学本科生毕业设计（论文）"), pad: 1pt)
         ]
       }
       v(2em)
@@ -381,7 +240,7 @@
       ]
     }),
   )
-
+  set underline(evade: false)
   set text(fsz.one, font: ff.song, lang: "zh")
   set align(center + horizon)
   set heading(numbering: chinesenumbering)
@@ -481,11 +340,10 @@
         // Handle equations
         link(el_loc, [
           式
-          #chinesenumbering(
+          #numbering(
+            "1-1",
             chaptercounter.at(el_loc).first(),
             equationcounter.at(el_loc).first(),
-            location: el_loc,
-            split: "-",
           )
         ])
       } else if el.func() == figure {
@@ -493,31 +351,28 @@
         if el.kind == image {
           link(el_loc, [
             图
-            #chinesenumbering(
+            #numbering(
+              "1-1",
               chaptercounter.at(el_loc).first(),
               imagecounter.at(el_loc).first(),
-              location: el_loc,
-              split: "-",
             )
           ])
         } else if el.kind == table {
           link(el_loc, [
             表
-            #chinesenumbering(
+            #numbering(
+              "1-1",
               chaptercounter.at(el_loc).first(),
               tablecounter.at(el_loc).first(),
-              location: el_loc,
-              split: "-",
             )
           ])
         } else if el.kind == "code" {
           link(el_loc, [
             代码
-            #chinesenumbering(
+            #numbering(
+              "1-1",
               chaptercounter.at(el_loc).first(),
               rawcounter.at(el_loc).first(),
-              location: el_loc,
-              split: "-",
             )
           ])
         }

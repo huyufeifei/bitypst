@@ -1,5 +1,5 @@
-#import "template/template.typ": codeblock
-#import "template/util.typ" : empty_par
+#import "../template/template.typ": codeblock
+#import "../template/util.typ" : empty_par, chineseunderline
 
 = 引入 <intro>
 
@@ -7,8 +7,9 @@
 
 == 基本样式
 
-*加粗bold。*
-_斜体 italic_ 。
+*加粗bold。* 
+_斜体 italic_ 。 
+#underline([下划线])
 
 + 有序列表
 + 有序列表
@@ -24,8 +25,9 @@ _斜体 italic_ 。
 
 #link("https://github.com/typst/typst")[链接]。
 
-引用文献猫@cat 猫狗@cat @dog 猫狗鱼@cat @dog @fish （多个引用时显示有问题，已提issue）。引用章（ @intro ）引用节（ @1.2 ）。
+footnote#footnote([this is content]).
 
+引用文献猫@cat 猫狗@cat @dog 猫狗鱼@cat @dog @fish （多个引用时显示有问题，已提issue）。引用章（ @intro ）引用节（ @1.2 ）。
 
 == 插入媒体 <1.2>
 
@@ -38,7 +40,7 @@ fn main() {
 }
 ```
 
-// #empty_par
+#empty_par
 代码块后默认没有段首两格缩进。想要缩进，可以加入一个空段：`#empty_par`
 
 有名字和标号的代码块：
@@ -50,7 +52,7 @@ fn main() {
   }
   ```,
   caption: [一段代码],
-  outline: true
+  outline: true,
 ) <code_label>
 
 对代码的引用：@code_label 。
@@ -68,9 +70,14 @@ $ x^n+y^n=z^n (x,y,z,n in NN) $ <equa1>
 图片：
 
 #figure(
-  image("template/bit_name.png", width: 6em),
+  image("../template/bit_name.png", width: 6em),
   caption: [学校名称]
 ) <img1>
+
+#figure(
+  image("../template/bit_name.png", width: 6em),
+  caption: [学校名称]
+) <img2>
 
 对图片的引用：@img1。
 

@@ -1,5 +1,5 @@
 #import "template/template.typ": *
-#import "misc.typ": *
+#import "content/config.typ": *
 
 #show: doc => conf(
   cauthor: "张三",
@@ -19,10 +19,4 @@
   doc,
 )
 
-#include "ch1.typ"
-#include "ch2.typ"
-
-#pagebreak(weak: true)
-#bibliography(("ref.yaml", "ref.bib"))
-// #pagebreak(weak: true)
-// #appendix()
+#include "content/main.typ"
