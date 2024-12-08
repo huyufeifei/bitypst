@@ -1,5 +1,5 @@
 #let c_author = [张三];
-#let student_id = [1120203276];
+#let student_id = [1120200001];
 #let c_title = [论文题目];
 #let e_title = [English Title];
 #let c_school = [你的学院];
